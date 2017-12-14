@@ -5,7 +5,7 @@ from pylepton.Lepton3 import Lepton3
 
 def main(device = "/dev/spidev0.0"):
     a = np.zeros((240, 320, 3), dtype=np.uint8)
-    lepton_buf = np.zeros((60, 80, 1), dtype=np.uint16)
+    lepton_buf = np.zeros((120, 160, 1), dtype=np.uint16)
     try:
         with Lepton3(device) as l:
             last_nr = 0
