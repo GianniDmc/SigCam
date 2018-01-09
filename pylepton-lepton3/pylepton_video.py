@@ -19,7 +19,23 @@ def main(device = "/dev/spidev0.0"):
                 cv2.normalize(lepton_buf, lepton_buf, 0, 65535, cv2.NORM_MINMAX)
                 np.right_shift(lepton_buf, 8, lepton_buf)
                 a[:lepton_buf.shape[0], :lepton_buf.shape[1], :] = lepton_buf
-                gmask = fbgb.apply(a)
+
+                # Application BackgroundSubtractorMOG2
+                gmask = fgbg.apply(a)
+
+                thresh = cv2.threshold(gmask, 25, 255, cv2.THRESH_BINARY)[1]
+                thresh = cv2.dilate(thresh, None, iterations=2)
+                
+                # Recherche contours et traçage de rectangles pour les repérer
+                _, contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+                for c in contours:
+                    if cv2.contourArea(c) < 100:
+                        continue
+
+                    (x,y,w,h) = cv2.boudingRect(c)
+                    cv2.rectangle(gmask, (x,y), (x + w, y + h), (255, 255, 255), 2)
+
                 cv2.imshow('Buffer',gmask)
                 cv2.waitKey(1)
     except Exception:
