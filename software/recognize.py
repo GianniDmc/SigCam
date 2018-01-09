@@ -59,7 +59,7 @@ while(1):
     """
 
     #Affichage de l'image
-    cv2.imshow('frame',thresh)
+    cv2.imshow('frame',gmask)
     k = cv2.waitKey(30) & 0xff
     if k == 's':
         break
