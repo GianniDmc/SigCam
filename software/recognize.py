@@ -34,7 +34,7 @@ while(1):
 
     for c in contours:
 		# if the contour is too small, ignore it
-		if cv2.contourArea(c) < 500:
+		if cv2.contourArea(c) < 100:
 			continue
  
 		# compute the bounding box for the contour, draw it on the frame,
