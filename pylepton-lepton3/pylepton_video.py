@@ -6,6 +6,7 @@ from pylepton.Lepton3 import Lepton3
 def main(device = "/dev/spidev0.0"):
     a = np.zeros((120, 160, 3), dtype=np.uint8)
     lepton_buf = np.zeros((120, 160, 1), dtype=np.uint16)
+    fgbg = cv2.createBackgroundSubtractorMOG2()
     try:
         with Lepton3(device) as l:
             last_nr = 0
@@ -18,7 +19,8 @@ def main(device = "/dev/spidev0.0"):
                 cv2.normalize(lepton_buf, lepton_buf, 0, 65535, cv2.NORM_MINMAX)
                 np.right_shift(lepton_buf, 8, lepton_buf)
                 a[:lepton_buf.shape[0], :lepton_buf.shape[1], :] = lepton_buf
-                cv2.imshow('Buffer',a)
+                gmask = fbgb.apply(a)
+                cv2.imshow('Buffer',gmask)
                 cv2.waitKey(1)
     except Exception:
         traceback.print_exc()
