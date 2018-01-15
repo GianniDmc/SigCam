@@ -11,12 +11,12 @@ def main(device = "/dev/spidev0.0"):
     fgbg = cv2.createBackgroundSubtractorMOG2()
 
     # Window creation to expand them
-    cv2.namedWindow('Recognition',cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Recognition',800,600)
-    cv2.namedWindow('Original',cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Original',800,600)
-    cv2.namedWindow('Threshold', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Threshold', 800,600)
+    cv2.namedWindow('Background Subtraction',cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Background Subtraction',800,600)
+    cv2.namedWindow('Original Stream',cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Original Stream',800,600)
+    cv2.namedWindow('Threshold Processed', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Threshold Processed', 800,600)
     rectangleFound = False
     try:
         with Lepton3(device) as l:
@@ -60,9 +60,9 @@ def main(device = "/dev/spidev0.0"):
                         rectangleFound = True
                 
                 # Displays the 3 steps of the image processing in 3 windows
-                cv2.imshow('Original',a)
+                cv2.imshow('Original Stream',a)
                 cv2.imshow('Background Subtraction',gmask)
-                cv2.imshow('Threshold', thresh)
+                cv2.imshow('Threshold Processed', thresh)
                 cv2.waitKey(1)
     except Exception:
         traceback.print_exc()
