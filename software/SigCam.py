@@ -1,3 +1,4 @@
+# coding: utf-8
 import traceback
 import numpy as np
 import cv2
@@ -35,9 +36,9 @@ def main(device = "/dev/spidev0.0"):
 
                 #Transformation de l'image sous format binaire puis affinage par erosion puis dilatation
                 thresh = cv2.threshold(gmask, 15, 255, cv2.THRESH_BINARY)[1]
-		        kernel = np.ones((2,2), np.uint8)
+                kernel = np.ones((2,2), np.uint8)
                 thresh = cv2.erode(thresh, kernel, iterations=1)
-		        thresh = cv2.dilate(thresh, kernel, iterations=1)
+                thresh = cv2.dilate(thresh, kernel, iterations=1)
                 
                 #Recherche de contours avec une surface supérieur à 70 pixels
                 _, contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -45,7 +46,7 @@ def main(device = "/dev/spidev0.0"):
                 for c in contours:
 		# if the contour is too small, ignore it
                     if cv2.contourArea(c) < 70:
-			            continue
+                        continue
  
 		# compute the bounding box for the contour, draw it on the frame,
 		# and update the text
@@ -54,10 +55,12 @@ def main(device = "/dev/spidev0.0"):
                     cv2.rectangle(thresh, (x, y), (x + w, y + h), (255, 255, 255), 2)
 
                     if(not rectangleFound):
-                        serial_transmission.serialsending("Detected","/dev/ttyUSB0")
+                        #serial_transmission.serialsending("Detected","/dev/ttyUSB0")
+                        print "Envoyé !"
+                        rectangleFound = True
                 cv2.imshow('Original',a)
                 cv2.imshow('Background Subtraction',gmask)
-		        cv2.imshow('Threshold', thresh)
+                cv2.imshow('Threshold', thresh)
                 cv2.waitKey(1)
     except Exception:
         traceback.print_exc()
