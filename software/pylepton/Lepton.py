@@ -42,7 +42,7 @@ class Lepton(object):
   VOSPI_FRAME_SIZE_BYTES = VOSPI_FRAME_SIZE * 2
   MODE = SPI_MODE_3
   BITS = 8
-  SPEED = 18000000
+  SPEED = 25000000
   SPIDEV_MESSAGE_LIMIT = 24
 
   def __init__(self, spi_dev = "/dev/spidev0.0"):
