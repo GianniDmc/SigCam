@@ -4,20 +4,23 @@ import numpy as np
 import cv2
 from pylepton.Lepton3 import Lepton3
 import serial_transmission
+import time
 
 def main(device = "/dev/spidev0.0"):
     a = np.zeros((120, 160, 3), dtype=np.uint8)
     lepton_buf = np.zeros((120, 160, 1), dtype=np.uint16)
     fgbg = cv2.createBackgroundSubtractorMOG2()
+    debut = time.time()
 
     # Window creation to expand them
     cv2.namedWindow('Background Subtraction',cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Background Subtraction',800,600)
+    cv2.resizeWindow('Background Subtraction',160*3,120*3)
     cv2.namedWindow('Original Stream',cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Original Stream',800,600)
+    cv2.resizeWindow('Original Stream',160*3,120*3)
     cv2.namedWindow('Threshold Processed', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Threshold Processed', 800,600)
+    cv2.resizeWindow('Threshold Processed', 160*3,120*3)
     rectangleFound = False
+    contoursFound = False
     try:
         with Lepton3(device) as l:
             last_nr = 0
@@ -44,9 +47,12 @@ def main(device = "/dev/spidev0.0"):
                 _, contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                 
                 for c in contours:
+		    
                     # if the contour is too small, ignore it
                     if cv2.contourArea(c) < 70:
                         continue
+                    
+                    contoursFound = True
  
                     # compute the bounding box for the contour, draw it on the frame,
                     # and update the text
@@ -54,11 +60,16 @@ def main(device = "/dev/spidev0.0"):
                     cv2.rectangle(a, (x, y), (x + w, y + h), (255, 255, 255), 2)
                     cv2.rectangle(thresh, (x, y), (x + w, y + h), (255, 255, 255), 2)
 
-                    if(not rectangleFound):
-                        #serial_transmission.serialsending("Detected","/dev/ttyUSB0")
+                    if(time.time() - debut) > 5:
+                        serial_transmission.serialsending("19",'/dev/ttyUSB1')
                         print "Envoyé !"
-                        rectangleFound = True
+                        debut = time.time()
+                        
+                if not contoursFound :
+                    debut = time.time()
                 
+                contoursFound = False
+
                 # Displays the 3 steps of the image processing in 3 windows
                 cv2.imshow('Original Stream',a)
                 cv2.imshow('Background Subtraction',gmask)
