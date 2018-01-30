@@ -61,13 +61,13 @@ def main(device = "/dev/spidev0.0"):
                     cv2.rectangle(thresh, (x, y), (x + w, y + h), (255, 255, 255), 2)
 
                     if(time.time() - debut) > 5:
-                        serial_transmission.serialsending("19",'/dev/ttyUSB1')
+                        serial_transmission.serialsending(str(x)+str(y)+str(w)+str(h),'/dev/ttyUSB1')
                         print "Envoyé !"
                         debut = time.time()
-                        
+                    
                 if not contoursFound :
                     debut = time.time()
-                
+                        
                 contoursFound = False
 
                 # Displays the 3 steps of the image processing in 3 windows
